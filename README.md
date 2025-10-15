@@ -522,21 +522,48 @@ Contributions welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 MIT License - see [LICENSE](./LICENSE) file for details.
 
-## 🔗 Links
+## 🔗 Important Links
 
-- **GitHub Repository**: [https://github.com/YOUR_USERNAME/fhevm-react-template](https://github.com/YOUR_USERNAME/fhevm-react-template)
-- **Documentation**: [https://fhevm-sdk-docs.vercel.app](https://fhevm-sdk-docs.vercel.app)
-- **Zama Docs**: [https://docs.zama.ai/](https://docs.zama.ai/)
-- **FHEVM Docs**: [https://docs.zama.ai/fhevm](https://docs.zama.ai/fhevm)
+### Project Resources
 
-## 💡 Support
+- 📂 **GitHub Repository**: [https://github.com/TysonDouglas/fhevm-react-template](https://github.com/TysonDouglas/fhevm-react-template)
+- 🌐 **Live Demo Application**: [https://fhe-athlete-selection.vercel.app/](https://fhe-athlete-selection.vercel.app/)
+- 📹 **Demo Video**: Download `demo.mp4` from the repository
+- 📚 **Documentation**: Available in [docs/](./docs/) directory
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/fhevm-react-template/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/fhevm-react-template/discussions)
-- **Discord**: [Zama Discord](https://discord.gg/zama)
+### External Resources
+
+- **Zama FHEVM Documentation**: [https://docs.zama.ai/fhevm](https://docs.zama.ai/fhevm)
+- **FHEVM Developer Docs**: [https://docs.zama.ai/](https://docs.zama.ai/)
+- **Zama Community Discord**: [https://discord.gg/zama](https://discord.gg/zama)
+
+## 💡 Support & Issues
+
+- **Repository Issues**: [GitHub Issues](https://github.com/TysonDouglas/fhevm-react-template/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/TysonDouglas/fhevm-react-template/discussions)
+- **Documentation**: Check [docs/](./docs/) for detailed guides
+
+---
+
+## 🚀 Get Started Now
+
+### Option 1: Try the Live Demo
+Visit [https://fhe-athlete-selection.vercel.app/](https://fhe-athlete-selection.vercel.app/) to experience the SDK in action with a real-world privacy-preserving application.
+
+### Option 2: Clone and Build
+```bash
+git clone https://github.com/TysonDouglas/fhevm-react-template.git
+cd fhevm-react-template
+npm install
+```
+
+### Option 3: Watch the Demo
+Download `demo.mp4` from the repository to see a complete walkthrough of setup, integration, and usage.
 
 ---
 
 **Built with ❤️ for the FHEVM Community**
 
 *Making confidential smart contracts accessible to every developer*
+
+**Bounty Program Submission - Universal FHEVM SDK**
