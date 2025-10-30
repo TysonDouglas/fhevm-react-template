@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Anonymous Athlete Selection System</title>
+    <script src="ethers.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=5">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏃‍♂️ Anonymous Athlete Selection System</h1>
+            <p class="subtitle">Privacy-Preserving Sports Talent Selection</p>
+        </header>
+
+        <div class="status-bar">
+            <div id="connectionStatus" class="status-item">
+                <span class="status-label">Connection:</span>
+                <span id="connectionText">Disconnected</span>
+            </div>
+            <div id="accountStatus" class="status-item">
+                <span class="status-label">Account:</span>
+                <span id="accountText">Not Connected</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card" id="connectionCard">
+                <h2>Connect Wallet</h2>
+                <button id="connectBtn" class="btn btn-primary">Connect MetaMask</button>
+                <p class="info-text">Connect your wallet to interact with the Anonymous Athlete Selection System</p>
+            </div>
+
+            <div class="card" id="selectionInfoCard" style="display: none;">
+                <h2>Current Selection Process</h2>
+                <div id="selectionInfo">
+                    <div class="info-row">
+                        <span class="label">Sport Category:</span>
+                        <span id="sportCategory">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Status:</span>
+                        <span id="selectionStatus">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Registration Deadline:</span>
+                        <span id="regDeadline">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Evaluation Deadline:</span>
+                        <span id="evalDeadline">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Registered Athletes:</span>
+                        <span id="registeredCount">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Selected Athletes:</span>
+                        <span id="selectedCount">-</span>
+                    </div>
+                </div>
+                <button id="refreshBtn" class="btn btn-secondary">Refresh Info</button>
+            </div>
+
+            <div class="card" id="committeeCard" style="display: none;">
+                <h2>🎯 Committee Functions</h2>
+                <div class="section">
+                    <h3>Start New Selection</h3>
+                    <div class="form-group">
+                        <label for="sportCategoryInput">Sport Category:</label>
+                        <input type="text" id="sportCategoryInput" placeholder="e.g., Swimming, Athletics" class="form-input">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minPerformanceInput">Min Performance (0-100):</label>
+                            <input type="number" id="minPerformanceInput" min="0" max="100" value="70" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="minFitnessInput">Min Fitness (0-100):</label>
+                            <input type="number" id="minFitnessInput" min="0" max="100" value="80" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minExperienceInput">Min Experience (years):</label>
+                            <input type="number" id="minExperienceInput" min="0" max="50" value="2" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxAgeInput">Max Age:</label>
+                            <input type="number" id="maxAgeInput" min="16" max="50" value="30" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="maxSelectionsInput">Max Selections:</label>
+                            <input type="number" id="maxSelectionsInput" min="1" max="100" value="10" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="regPeriodInput">Registration Period (days):</label>
+                            <input type="number" id="regPeriodInput" min="1" max="30" value="7" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="evalPeriodInput">Evaluation Period (days):</label>
+                        <input type="number" id="evalPeriodInput" min="1" max="30" value="3" class="form-input">
+                    </div>
+                    <button id="startSelectionBtn" class="btn btn-primary">Start New Selection</button>
+                </div>
+
+                <div class="section">
+                    <h3>Evaluator Management</h3>
+                    <div class="form-group">
+                        <label for="evaluatorAddress">Evaluator Address:</label>
+                        <input type="text" id="evaluatorAddress" placeholder="0x..." class="form-input">
+                    </div>
+                    <div class="button-group">
+                        <button id="addEvaluatorBtn" class="btn btn-success">Add Evaluator</button>
+                        <button id="removeEvaluatorBtn" class="btn btn-danger">Remove Evaluator</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Finalize Selection</h3>
+                    <p class="info-text">Complete the current selection process after evaluation period ends.</p>
+                    <button id="finalizeBtn" class="btn btn-warning">Finalize Selection</button>
+                </div>
+            </div>
+
+            <div class="card" id="athleteCard" style="display: none;">
+                <h2>🏃‍♂️ Athlete Registration</h2>
+                <div class="section">
+                    <h3>Register for Current Selection</h3>
+                    <p class="info-text">All data is encrypted and kept private during the selection process.</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="performanceScore">Performance Score (0-100):</label>
+                            <input type="number" id="performanceScore" min="0" max="100" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="fitnessLevel">Fitness Level (0-100):</label>
+                            <input type="number" id="fitnessLevel" min="0" max="100" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="experienceYears">Experience (years):</label>
+                            <input type="number" id="experienceYears" min="0" max="50" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="athleteAge">Age:</label>
+                            <input type="number" id="athleteAge" min="16" max="50" class="form-input">
+                        </div>
+                    </div>
+                    <button id="registerAthleteBtn" class="btn btn-primary">Register as Athlete</button>
+                </div>
+
+                <div class="section">
+                    <h3>Registration Status</h3>
+                    <div id="athleteStatus">
+                        <div class="status-item">
+                            <span class="status-label">Registered:</span>
+                            <span id="isRegistered">No</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Evaluated:</span>
+                            <span id="isEvaluated">No</span>
+                        </div>
+                    </div>
+                    <button id="checkStatusBtn" class="btn btn-secondary">Check Status</button>
+                </div>
+            </div>
+
+            <div class="card" id="evaluatorCard" style="display: none;">
+                <h2>🔍 Evaluator Functions</h2>
+                <div class="section">
+                    <h3>Evaluate Athletes</h3>
+                    <div class="form-group">
+                        <label for="athleteToEvaluate">Athlete Address:</label>
+                        <input type="text" id="athleteToEvaluate" placeholder="0x..." class="form-input">
+                    </div>
+                    <button id="evaluateAthleteBtn" class="btn btn-primary">Evaluate Athlete</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="messageArea" class="message-area"></div>
+
+        <footer>
+            <p>© 2024 Anonymous Athlete Selection System - Privacy-First Sports Selection</p>
+        </footer>
+    </div>
+
+    <script src="app.js?v=5"></script>
+</body>
+</html>

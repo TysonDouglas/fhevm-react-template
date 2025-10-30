@@ -70,19 +70,36 @@ fhevm-react-template/
 │       │   ├── utils/          # Utility functions
 │       │   └── types/          # TypeScript definitions
 │       └── package.json
-├── examples/
-│   ├── nextjs-app/             # Next.js example
-│   ├── react-app/              # React example
-│   └── athlete-selection/      # Real-world example
+├── examples/                   # Example implementations
+│   ├── nextjs-app/             # Next.js App Router example
+│   │   ├── src/
+│   │   │   ├── app/            # Next.js 14 App Router
+│   │   │   │   ├── api/        # API routes (encrypt, decrypt, compute)
+│   │   │   │   ├── layout.tsx  # Root layout with FHE provider
+│   │   │   │   └── page.tsx    # Home page
+│   │   │   ├── components/     # React components
+│   │   │   │   ├── fhe/        # FHE-specific components
+│   │   │   │   └── ui/         # UI components
+│   │   │   ├── lib/            # Utility libraries
+│   │   │   │   ├── fhe/        # FHE operations
+│   │   │   │   └── utils/      # Helper functions
+│   │   │   └── types/          # TypeScript types
+│   ├── react-app/              # React SPA example
+│   └── athlete-selection/      # Real-world privacy application
+├── templates/                  # Symlink to examples
 ├── docs/                       # Documentation
+│   ├── getting-started.md
+│   ├── api-reference.md
+│   ├── nextjs-guide.md
+│   └── react-guide.md
 └── demo.mp4                    # Video demonstration
 ```
 
 ## 🎨 Examples
 
-### 1. Next.js Application
+### 1. Next.js Application (App Router)
 
-Full-featured Next.js app demonstrating SDK integration.
+Full-featured Next.js 14 app with App Router demonstrating complete SDK integration.
 
 ```bash
 cd examples/nextjs-app
@@ -91,10 +108,13 @@ npm run dev
 ```
 
 **Features**:
+- Next.js 14 App Router architecture
 - Server-side rendering support
-- API routes for backend encryption
-- Optimized performance
-- Production-ready
+- API routes for FHE operations (encrypt, decrypt, compute)
+- FHE-specific components (EncryptionDemo, ComputationDemo, KeyManager)
+- Modular structure with lib utilities
+- Type-safe with TypeScript
+- Production-ready configuration
 
 ### 2. React Application
 
@@ -241,22 +261,31 @@ function MyComponent() {
 }
 ```
 
-### Next.js (Server & Client)
+### Next.js App Router (Server & Client)
 
 ```typescript
-// pages/api/encrypt.ts (Server-side)
-import { encryptInput } from '@fhevm/sdk'
+// app/api/fhe/encrypt/route.ts (Server-side API Route)
+import { NextRequest, NextResponse } from 'next/server'
+import { encryptInput, initFhevm } from '@fhevm/sdk'
 
-export default async function handler(req, res) {
-  const encrypted = await encryptInput(req.body.value)
-  res.json({ encrypted })
+export async function POST(request: NextRequest) {
+  const { value, type } = await request.json()
+  const fhevm = await initFhevm({ network: 'sepolia' })
+  const encrypted = await encryptInput(value, fhevm, { type })
+  return NextResponse.json({ success: true, data: { encrypted } })
 }
 
-// components/Form.tsx (Client-side)
-import { useFhevm } from '@fhevm/sdk/react'
+// components/fhe/EncryptionDemo.tsx (Client-side Component)
+'use client'
+import { useEncrypt } from '@fhevm/sdk/react'
 
-export function Form() {
-  const { encrypt } = useFhevm()
+export default function EncryptionDemo() {
+  const { encrypt, isEncrypting } = useEncrypt()
+
+  const handleEncrypt = async (value: number) => {
+    const encrypted = await encrypt(value)
+    console.log('Encrypted:', encrypted)
+  }
   // ...
 }
 ```
