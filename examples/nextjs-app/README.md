@@ -1,15 +1,17 @@
-# FHEVM Next.js Example
+# FHEVM Next.js App Router Example
 
-Full-featured Next.js application demonstrating FHEVM SDK integration with server-side rendering, API routes, and optimized performance.
+Full-featured Next.js 14 application with App Router demonstrating complete FHEVM SDK integration, featuring server-side rendering, API routes, and optimized performance.
 
 ## Features
 
-- ✅ Server-side rendering (SSR)
-- ✅ API routes for backend encryption
-- ✅ FHEVM SDK React hooks
-- ✅ TypeScript support
+- ✅ Next.js 14 App Router architecture
+- ✅ Server-side rendering (SSR) and client components
+- ✅ API routes for FHE operations (encrypt, decrypt, compute, keys)
+- ✅ FHEVM SDK React hooks integration
+- ✅ Modular component structure (UI + FHE components)
+- ✅ TypeScript support with path aliases
 - ✅ Production-ready configuration
-- ✅ Optimized performance
+- ✅ Optimized performance and bundle size
 
 ## Quick Start
 
@@ -31,38 +33,70 @@ npm start
 
 ```
 nextjs-app/
-├── pages/
-│   ├── api/              # API routes
-│   │   ├── encrypt.ts    # Server-side encryption
-│   │   └── decrypt.ts    # Server-side decryption
-│   ├── _app.tsx          # App wrapper with FHEVM Provider
-│   └── index.tsx         # Home page
-├── components/           # React components
-│   ├── EncryptForm.tsx
-│   └── DecryptForm.tsx
-├── lib/                  # Utilities
-│   └── fhevm.ts
-└── public/               # Static assets
+├── src/
+│   ├── app/                      # App Router (Next.js 14)
+│   │   ├── layout.tsx            # Root layout with FHE provider
+│   │   ├── page.tsx              # Home page
+│   │   ├── globals.css           # Global styles
+│   │   └── api/                  # API routes
+│   │       ├── fhe/
+│   │       │   ├── route.ts      # Main FHE operations
+│   │       │   ├── encrypt/route.ts
+│   │       │   ├── decrypt/route.ts
+│   │       │   └── compute/route.ts
+│   │       └── keys/route.ts     # Key management
+│   │
+│   ├── components/               # React components
+│   │   ├── ui/                   # Base UI components
+│   │   │   ├── Button.tsx
+│   │   │   ├── Input.tsx
+│   │   │   └── Card.tsx
+│   │   └── fhe/                  # FHE-specific components
+│   │       ├── EncryptionDemo.tsx
+│   │       ├── ComputationDemo.tsx
+│   │       └── KeyManager.tsx
+│   │
+│   ├── lib/                      # Utility libraries
+│   │   ├── fhe/                  # FHE operations
+│   │   │   ├── client.ts         # Client-side utilities
+│   │   │   ├── server.ts         # Server-side utilities
+│   │   │   ├── keys.ts           # Key management
+│   │   │   └── types.ts          # FHE type definitions
+│   │   └── utils/                # Helper functions
+│   │       ├── security.ts
+│   │       └── validation.ts
+│   │
+│   └── types/                    # TypeScript types
+│       ├── fhe.ts
+│       └── api.ts
+│
+├── package.json
+├── tsconfig.json
+└── next.config.js
 ```
 
 ## Usage
 
-### 1. Provider Setup
+### 1. Provider Setup (App Router)
 
 ```typescript
-// pages/_app.tsx
+// src/app/layout.tsx
 import { FhevmProvider } from '@fhevm/sdk/react'
 
-export default function App({ Component, pageProps }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const fhevmConfig = {
-    network: 'sepolia',
-    contractAddress: '0x...'
+    network: process.env.NEXT_PUBLIC_NETWORK || 'sepolia',
+    contractAddress: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
   }
 
   return (
-    <FhevmProvider config={fhevmConfig}>
-      <Component {...pageProps} />
-    </FhevmProvider>
+    <html lang="en">
+      <body>
+        <FhevmProvider config={fhevmConfig}>
+          {children}
+        </FhevmProvider>
+      </body>
+    </html>
   )
 }
 ```
@@ -70,38 +104,51 @@ export default function App({ Component, pageProps }) {
 ### 2. Client-side Encryption
 
 ```typescript
-// components/EncryptForm.tsx
-import { useEncrypt } from '@fhevm/sdk/react'
+// src/components/fhe/EncryptionDemo.tsx
+'use client'  // Required for client components in App Router
 
-export function EncryptForm() {
+import { useEncrypt } from '@fhevm/sdk/react'
+import Button from '@/components/ui/Button'
+
+export default function EncryptionDemo() {
   const { encrypt, isEncrypting } = useEncrypt()
 
   const handleSubmit = async (value: number) => {
-    const encrypted = await encrypt(value)
+    const encrypted = await encrypt(value, { type: 'uint32' })
     console.log('Encrypted:', encrypted)
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Form fields */}
+      <Button variant="primary" disabled={isEncrypting}>
+        {isEncrypting ? 'Encrypting...' : 'Encrypt'}
+      </Button>
     </form>
   )
 }
 ```
 
-### 3. Server-side API
+### 3. Server-side API Routes
 
 ```typescript
-// pages/api/encrypt.ts
+// src/app/api/fhe/encrypt/route.ts
+import { NextRequest, NextResponse } from 'next/server'
 import { encryptInput, initFhevm } from '@fhevm/sdk'
 
-export default async function handler(req, res) {
+export async function POST(request: NextRequest) {
+  const { value, type } = await request.json()
+
   const fhevm = await initFhevm({
-    network: 'sepolia'
+    network: process.env.NEXT_PUBLIC_NETWORK || 'sepolia',
+    contractAddress: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
   })
 
-  const encrypted = await encryptInput(req.body.value, fhevm)
-  res.json({ encrypted })
+  const encrypted = await encryptInput(value, fhevm, { type })
+
+  return NextResponse.json({
+    success: true,
+    data: { encrypted, timestamp: Date.now() }
+  })
 }
 ```
 

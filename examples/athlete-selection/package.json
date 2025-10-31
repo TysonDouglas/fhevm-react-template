@@ -1,4 +1,8 @@
 {
+  "name": "athlete-selection",
+  "version": "1.0.0",
+  "description": "Privacy-preserving athlete selection system using FHEVM",
+  "private": true,
   "dependencies": {
     "ethers": "^5.7.2"
   }
